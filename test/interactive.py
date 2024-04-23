@@ -1,21 +1,17 @@
 import requests
 import sys
 
-sys.path.insert(0, '../..')
+sys.path.insert(0, '..')
 
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
-from transformers import Seq2SeqTrainingArguments, Seq2SeqTrainer
+from transformers import AutoTokenizer, AutoModelForCausalLM
 
-API_BASE_URL = 'http://localhost:5000/'
 MODEL_NAME = 'meta-llama/Meta-Llama-3-8B-Instruct'
-TOKENIZER_PATH = MODEL_NAME + '/tokenizer_config.json'
-MODEL_PATH = MODEL_NAME + '/checkpoint-best-bleu'
 
 
 class InteractivePromptGenerator:
     def __init__(self):
-        self._tokenizer = AutoTokenizer.from_pretrained(TOKENIZER_PATH)
-        self._model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_PATH).half().cuda()
+        self._tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+        self._model = AutoModelForCausalLM.from_pretrained(MODEL_NAME).half().cuda()
 
     def _prepare_inputs(self, messages):
         inputs = self._tokenizer([message['content'] for message in messages], padding='longest', truncation=True,
